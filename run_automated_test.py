@@ -31,20 +31,20 @@ def check_camera_stream():
             timeout=10
         )
         if result.returncode == 0:
-            print("  ✓ Camera stream is live")
+            print("  Camera stream is live")
             return True
         else:
             print(result.stderr.decode())
-            print("  ✗ Camera stream unreachable (ffprobe returned error)")
+            print("  Camera stream unreachable (ffprobe returned error)")
             return False
     except subprocess.TimeoutExpired:
-        print("  ✗ Camera stream unreachable (connection timed out)")
+        print("  Camera stream unreachable (connection timed out)")
         return False
     except FileNotFoundError:
-        print("  ✗ ffprobe not found — make sure ffmpeg is installed and in PATH")
+        print("  ffprobe not found — make sure ffmpeg is installed and in PATH")
         return False
     except Exception as e:
-        print(f"  ✗ Camera check failed: {e}")
+        print(f"  Camera check failed: {e}")
         return False
 
 def update_go2rtc_config(config_params):
@@ -68,7 +68,7 @@ def update_go2rtc_config(config_params):
         yaml.dump(config, f, default_flow_style=False, sort_keys=False)
 
     print(
-        f"✓ Updated ip_cam: {config_params['codec']}, {config_params['width']}x{config_params['height']}, {config_params['bitrate']}, {config_params['framerate']}fps")
+        f"Updated ip_cam: {config_params['codec']}, {config_params['width']}x{config_params['height']}, {config_params['bitrate']}, {config_params['framerate']}fps")
 
 def restart_container():
     """Restart Go2RTC container"""
@@ -77,10 +77,10 @@ def restart_container():
     result = subprocess.run(['podman', 'restart', 'go2rtc-ha'], capture_output=True)
 
     if result.returncode == 0:
-        print("✓ Container restarted successfully")
+        print("Container restarted successfully")
         return True
     else:
-        print(f"✗ Failed to restart container: {result.stderr.decode()}")
+        print(f"Failed to restart container: {result.stderr.decode()}")
         return False
 
 def trigger_stream():
@@ -92,10 +92,10 @@ def trigger_stream():
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
-        print("  ✓ Stream consumer started")
+        print("  Stream consumer started")
         return process
     except Exception as e:
-        print(f"  ✗ Failed to start consumer: {e}")
+        print(f"  Failed to start consumer: {e}")
         return None
 
 def wait_for_active_stream(timeout=60):
@@ -126,7 +126,7 @@ def wait_for_active_stream(timeout=60):
                 timeout=10
             )
             if result.returncode == 0:
-                print("  ✓ Active stream detected!")
+                print("  Active stream detected!")
                 return consumer  # return the live consumer process
             else:
                 time.sleep(5)
@@ -134,7 +134,7 @@ def wait_for_active_stream(timeout=60):
             print(f"  Warning: {e}")
             time.sleep(5)
 
-    print("  ✗ Stream not detected after timeout!")
+    print("  Stream not detected after timeout!")
     if consumer:
         consumer.terminate()
     return None
@@ -153,10 +153,10 @@ def verify_data_capture():
                     cpu = float(line.split(',')[1].strip().replace('%', ''))
                     print(f"  ✓ Container active - CPU: {cpu:.1f}%")
                     return True
-        print("  ✗ Container not found in stats!")
+        print("  Container not found in stats!")
         return False
     except Exception as e:
-        print(f"  ✗ Stats verification error: {e}")
+        print(f"  Stats verification error: {e}")
         return False
 
 def run_test(test_id, config_params, duration=60, stabilization_time=30):
@@ -180,7 +180,7 @@ def run_test(test_id, config_params, duration=60, stabilization_time=30):
     # Step 2: Restart container
     print("\n[2/6] Restarting container...")
     if not restart_container():
-        print("✗ Test failed: Could not restart container")
+        print("Test failed: Could not restart container")
         return False
 
     # Step 3: Wait for stabilization
@@ -194,7 +194,7 @@ def run_test(test_id, config_params, duration=60, stabilization_time=30):
     print("\n[4/6] Waiting for active stream...")
     consumer = wait_for_active_stream(timeout=60)
     if not consumer:
-        print("✗ Test failed: go2rtc did not start streaming")
+        print("Test failed: go2rtc did not start streaming")
         return False
 
     # Step 5: Capture performance data
@@ -204,7 +204,7 @@ def run_test(test_id, config_params, duration=60, stabilization_time=30):
 
     # Stop consumer after capture
     consumer.terminate()
-    print("  ✓ Stream consumer stopped")
+    print("  Stream consumer stopped")
 
     # Step 6: Cool down
     print("\n[6/6] Cooling down before next test...")
