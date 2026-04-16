@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Automated Docker Stats Capture for Go2RTC Performance Testing
+Automated Podman Stats Capture for Go2RTC Performance Testing
 Captures CPU, Memory, and Network statistics during streaming tests
 """
 
@@ -12,9 +12,9 @@ import os
 from datetime import datetime
 
 
-def capture_docker_stats(test_id, duration=60, interval=1):
+def capture_podman_stats(test_id, duration=60, interval=1):
     """
-    Capture Docker container statistics for specified duration
+    Capture Podman container statistics for specified duration
 
     Args:
         test_id: Test identifier (e.g., 'T1A_run1')
@@ -53,7 +53,7 @@ def capture_docker_stats(test_id, duration=60, interval=1):
 
     while time.time() - start_time < duration:
         try:
-            # Get Docker stats (no streaming, single snapshot)
+            # Get Podman stats (no streaming, single snapshot)
             result = subprocess.run(
                 ['podman', 'stats', '--no-stream', '--format',
                  '{{.Name}},{{.CPUPerc}},{{.MemUsage}},{{.MemPerc}},{{.NetIO}}'],
@@ -131,4 +131,4 @@ if __name__ == "__main__":
     test_id = sys.argv[1]
     duration = int(sys.argv[2]) if len(sys.argv) > 2 else 60
 
-    capture_docker_stats(test_id, duration)
+    capture_podman_stats(test_id, duration)

@@ -200,7 +200,7 @@ def run_test(test_id, config_params, duration=60, stabilization_time=30):
     # Step 5: Capture performance data
     print(f"\n[5/6] Capturing performance data for {duration} seconds...")
     import capture_stats
-    log_file = capture_stats.capture_docker_stats(test_id, duration)
+    log_file = capture_stats.capture_podman_stats(test_id, duration)
 
     # Stop consumer after capture
     consumer.terminate()
